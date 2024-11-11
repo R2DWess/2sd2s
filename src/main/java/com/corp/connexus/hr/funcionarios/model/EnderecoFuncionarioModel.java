@@ -4,8 +4,6 @@ import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
-import java.util.Objects;
-
 @Embeddable
 public record EnderecoFuncionarioModel(
 
@@ -30,4 +28,4 @@ public record EnderecoFuncionarioModel(
         @NotBlank
         @Pattern(regexp = "^\\d{5}-\\d{3}$", message = "CEP inválido, formato esperado: 00000-000")
         String cep
-){}
+) {}

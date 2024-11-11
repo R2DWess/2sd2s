@@ -1,26 +1,20 @@
 package com.corp.connexus.hr.funcionarios.model;
 
-import com.corp.connexus.hr.funcionarios.identifier.CustomFuncionalId;
-import com.corp.connexus.hr.funcionarios.model.serielizer.TelefoneFuncionarioSerializer;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
-import org.hibernate.annotations.GenericGenerator;
 
 @Entity(name = "funcionario")
 @Table(name = "dados_funcionario")
-public class  DadosFuncionario {
-
+public class DadosFuncionario {
 
     @Id
-    @GeneratedValue(generator = "custom-funcional")
-    @CustomFuncionalId
     @JsonProperty("funcional")
-    private int idFuncional;
+    private String idFuncional;
 
     @NotBlank(message = "Campo nome é obrigatório")
     private String nomeFuncionario;
@@ -30,63 +24,48 @@ public class  DadosFuncionario {
     private String emailFuncionario;
 
     @Pattern(regexp = "^\\d{11}$", message = "O número de telefone deve ter exatamente 11 dígitos.")
-    @JsonSerialize(using = TelefoneFuncionarioSerializer.class)
     private String telefoneFuncionario;
 
-    @Embedded
-    @JsonProperty("enderecoFuncionarioModel")
-    private EnderecoFuncionarioModel enderecofuncionario;
+    private EnderecoFuncionarioModel enderecoFuncionario;
 
-    public DadosFuncionario(int idFuncional,
-                            String nomeFuncionario,
-                            String emailFuncionario,
-                            String telefoneFuncionario,
-                            EnderecoFuncionarioModel enderecofuncionario) {
-        this.idFuncional = idFuncional;
-        this.nomeFuncionario = nomeFuncionario;
-        this.emailFuncionario = emailFuncionario;
-        this.telefoneFuncionario = telefoneFuncionario;
-        this.enderecofuncionario = enderecofuncionario;
-    }
-
-    public int getIdFuncional() {
+    // Getters and Setters
+    public String getIdFuncional() {
         return idFuncional;
     }
 
-    public void setIdFuncional(int idFuncional) {
+    public void setIdFuncional(String idFuncional) {
         this.idFuncional = idFuncional;
     }
 
-    public @NotBlank(message = "Campo nome é obrigatório") String getNomeFuncionario() {
+    public String getNomeFuncionario() {
         return nomeFuncionario;
     }
 
-    public void setNomeFuncionario(@NotBlank(message = "Campo nome é obrigatório") String nomeFuncionario) {
+    public void setNomeFuncionario(String nomeFuncionario) {
         this.nomeFuncionario = nomeFuncionario;
     }
 
-    public @NotBlank(message = "Campo email é obrigatório ") @Email(message = "Formato de e-mail inválido") String getEmailFuncionario() {
+    public String getEmailFuncionario() {
         return emailFuncionario;
     }
 
-    public void setEmailFuncionario(@NotBlank(message = "Campo email é obrigatório ") @Email(message = "Formato de e-mail inválido") String emailFuncionario) {
+    public void setEmailFuncionario(String emailFuncionario) {
         this.emailFuncionario = emailFuncionario;
     }
 
-    public @Pattern(regexp = "^\\d{11}$", message = "O número de telefone deve ter exatamente 11 dígitos.") String getTelefoneFuncionario() {
+    public String getTelefoneFuncionario() {
         return telefoneFuncionario;
     }
 
-    public void setTelefoneFuncionario(@Pattern(regexp = "^\\d{11}$", message = "O número de telefone deve ter exatamente 11 dígitos.") String telefoneFuncionario) {
+    public void setTelefoneFuncionario(String telefoneFuncionario) {
         this.telefoneFuncionario = telefoneFuncionario;
     }
 
-    public EnderecoFuncionarioModel getEnderecofuncionario() {
-        return enderecofuncionario;
+    public EnderecoFuncionarioModel getEnderecoFuncionario() {
+        return enderecoFuncionario;
     }
 
-    public void setEnderecofuncionario(EnderecoFuncionarioModel enderecofuncionario) {
-        this.enderecofuncionario = enderecofuncionario;
+    public void setEnderecoFuncionario(EnderecoFuncionarioModel enderecoFuncionario) {
+        this.enderecoFuncionario = enderecoFuncionario;
     }
 }
-

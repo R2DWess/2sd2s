@@ -18,7 +18,7 @@ public class FuncionarioController {
     private FuncionarioService funcionarioService;
 
     @PostMapping("/novo-funcionario")
-    public ResponseEntity<?> cadastrarFuncionario(@Valid @RequestBody DadosFuncionario dadosFuncionario){
+    public DadosFuncionario cadastrarFuncionario(@Valid @RequestBody DadosFuncionario dadosFuncionario){
         return funcionarioService.cadastrar(dadosFuncionario);
     }
 
