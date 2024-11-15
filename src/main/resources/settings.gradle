@@ -1,22 +1,33 @@
-plugins {
-    id("com.gradle.enterprise") version "3.6.4"
-    id 'java'
-    id 'org.springframework.boot' version '3.3.5'
-    id 'io.spring.dependency-management' version '1.1.6'
-    id 'info.solidsoft.pitest' version '1.15.0'
+// Gerenciamento de plugins do projeto
+pluginManagement {
+    // Repositórios onde os plugins serão buscados
+    repositories {
+        gradlePluginPortal() // Repositório padrão do Gradle para plugins conhecidos
+        mavenCentral()       // Alternativa, especialmente útil para bibliotecas e plugins disponíveis no Maven
+        mavenLocal()         // Caso o plugin esteja em um repositório local (útil para desenvolvimento local)
+    }
+    // Declaração dos plugins utilizados no projeto com suas respectivas versões
+    plugins {
+        id 'org.springframework.boot' version '3.3.5' // Plugin do Spring Boot
+        id 'io.spring.dependency-management' version '1.1.6' // Gerenciamento de dependências do Spring
+        id 'info.solidsoft.pitest' version '1.15.0' // Plugin para análise de mutação de testes
+    }
 }
 
+// Define o nome do projeto raiz
+rootProject.name = 'connexus-hr'
+
+// Configurações opcionais para o Gradle Enterprise (usado para build scans e análise)
 gradleEnterprise {
     buildScan {
-        termsOfServiceUrl = "https://gradle.com/terms-of-service"
-        termsOfServiceAgree = "yes"
+        termsOfServiceUrl = "https://gradle.com/terms-of-service" // URL dos termos de serviço
+        termsOfServiceAgree = "yes"                              // Aceitação dos termos de serviço
     }
 }
 
+// Configuração opcional do cache do Gradle para builds locais
 buildCache {
     local {
-        enabled = true
+        enabled = true // Habilita o cache local para acelerar builds repetidos
     }
 }
-
-rootProject.name = 'connexus-hr'

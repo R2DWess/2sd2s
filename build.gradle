@@ -1,87 +1,105 @@
-subprojects {
-	apply plugin: 'java'
-	apply plugin: 'org.springframework.boot'
-	apply plugin: 'io.spring.dependency-management'
-	apply plugin: 'info.solidsoft.pitest'
+// Plugins utilizados no projeto
+plugins {
+	id 'java' // Plugin padrão para projetos Java
+	id 'org.springframework.boot' version '3.3.5' // Plugin do Spring Boot para configuração e empacotamento
+	id 'io.spring.dependency-management' version '1.1.6' // Plugin para gerenciar versões de dependências Spring
+	id 'info.solidsoft.pitest' version '1.15.0' // Plugin para executar testes de mutação
+}
 
-	java {
-		toolchain {
-			languageVersion = JavaLanguageVersion.of(23)
-		}
-		withSourcesJar()
-		withJavadocJar()
+// Configuração do Java
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17) // Define a versão do Java (17 é LTS - Long Term Support)
 	}
+	withSourcesJar() // Gera um arquivo JAR com os arquivos fonte
+	withJavadocJar() // Gera um arquivo JAR com a documentação (Javadoc)
+}
 
-	repositories {
-		mavenCentral()
-		mavenLocal()
+// Repositórios onde as dependências serão buscadas
+repositories {
+	mavenCentral() // Repositório central do Maven
+	mavenLocal()   // Repositório local (para bibliotecas em desenvolvimento local)
+}
+
+// Configuração da tarefa de testes
+tasks.named('test') {
+	useJUnitPlatform() // Define a plataforma de testes como JUnit 5
+	maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1 // Paraleliza testes com metade dos núcleos disponíveis
+	jvmArgs = ['-Xmx2048m'] // Configura memória máxima para a JVM durante os testes
+}
+
+// Configurações para o compilador Java
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8' // Define o encoding como UTF-8
+	options.incremental = true // Habilita compilação incremental para maior eficiência
+}
+
+// Configuração de informações do projeto
+group = 'com.corp.connexus' // Define o namespace do projeto
+version = '0.0.1-SNAPSHOT' // Versão do projeto
+
+// Configuração de dependências do projeto
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor // Dependências somente em tempo de compilação
 	}
+}
 
-	tasks.named('test') {
-		useJUnitPlatform()
-		maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
-		jvmArgs = ['-Xmx2048m']
-	}
+// Declaração das dependências
+dependencies {
+	// Dependências do Spring Boot
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa' // JPA para acesso a dados
+	implementation 'org.springframework.boot:spring-boot-starter-validation' // Validação de dados
+	implementation 'org.springframework.boot:spring-boot-starter-web' // Framework web
 
-	tasks.withType(JavaCompile) {
-		options.encoding = 'UTF-8'
-		options.incremental = true
-	}
+	// Lombok para reduzir código boilerplate
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
 
-	group = 'com.corp.connexus'
-	version = '0.0.1-SNAPSHOT'
+	// Conector MySQL
+	runtimeOnly 'com.mysql:mysql-connector-j'
 
-	configurations {
-		compileOnly {
-			extendsFrom annotationProcessor
-		}
-	}
+	// Dependências para testes
+	testImplementation 'org.springframework.boot:spring-boot-starter-test' // Testes do Spring Boot
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher' // Launcher do JUnit
 
-	dependencies {
-		implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-		implementation 'org.springframework.boot:spring-boot-starter-validation'
-		implementation 'org.springframework.boot:spring-boot-starter-web'
-		compileOnly 'org.projectlombok:lombok'
-		runtimeOnly 'com.mysql:mysql-connector-j'
-		annotationProcessor 'org.projectlombok:lombok'
-		testImplementation 'org.springframework.boot:spring-boot-starter-test'
-		testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-		pitest 'org.pitest:pitest-junit5-plugin:1.0.0'
-	}
+	// Plugin Pitest para análise de mutação de testes
+	pitest 'org.pitest:pitest-junit5-plugin:1.0.0'
+}
 
-	pitest {
-		targetClasses = ['com.corp.connexus.hr.*']
-		targetTests = ['com.corp.connexus.hr.*Test']
+// Configuração do plugin Pitest
+pitest {
+	targetClasses = ['com.corp.connexus.hr.*'] // Classes alvo para testes de mutação
+	targetTests = ['com.corp.connexus.hr.*Test'] // Testes alvo para mutação
 
-		excludedClasses = [
-				'com.corp.connexus.hr.model.*',
-				'com.corp.connexus.hr.config.*',
-				'com.corp.connexus.hr.exception.*',
-				'com.corp.connexus.hr.enums.*'
-		]
+	excludedClasses = [ // Classes a serem excluídas
+						'com.corp.connexus.hr.model.*',
+						'com.corp.connexus.hr.config.*',
+						'com.corp.connexus.hr.exception.*',
+						'com.corp.connexus.hr.enums.*'
+	]
 
-		excludedMethods = ['toString', 'hashCode', 'equals', 'get*', 'set*']
+	excludedMethods = ['toString', 'hashCode', 'equals', 'get*', 'set*'] // Métodos a serem excluídos
 
-		testSourceSets = [sourceSets.test]
-		mainSourceSets = [sourceSets.main]
+	testSourceSets = [sourceSets.test] // Define os testes a serem executados
+	mainSourceSets = [sourceSets.main] // Define as classes principais a serem testadas
 
-		junit5PluginVersion = '1.0.0'
+	junit5PluginVersion = '1.0.0' // Versão do plugin JUnit para Pitest
 
-		jvmArgs = ['-Xmx1024m']
+	jvmArgs = ['-Xmx1024m'] // Configuração de memória para o plugin Pitest
 
-		outputFormats = ['XML', 'HTML']
-		timestampedReports = false
+	outputFormats = ['XML', 'HTML'] // Formatos de saída do relatório
+	timestampedReports = false // Não inclui timestamps nos relatórios
 
-		useClasspathFile = true
+	useClasspathFile = true // Usa arquivo de classpath para maior compatibilidade
 
-		fileExtensionsToFilter.addAll('xml', 'orbit')
+	fileExtensionsToFilter.addAll('xml', 'orbit') // Arquivos para serem filtrados durante o teste
 
-		threads = 8
+	threads = 8 // Número de threads para execução paralela
 
-		pitestVersion = '1.15.0'
+	pitestVersion = '1.15.0' // Versão do Pitest
 
-		withHistory = true
-		historyInputLocation = file("$buildDir/pitestHistory")
-		historyOutputLocation = file("$buildDir/pitestHistory")
-	}
+	withHistory = true // Habilita histórico de mutação
+	historyInputLocation = file("$buildDir/pitestHistory") // Local de entrada do histórico
+	historyOutputLocation = file("$buildDir/pitestHistory") // Local de saída do histórico
 }
