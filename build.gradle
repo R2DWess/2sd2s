@@ -1,85 +1,87 @@
-plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.3.5'
-	id 'io.spring.dependency-management' version '1.1.6'
-	id 'info.solidsoft.pitest' version '1.15.0'
-}
+subprojects {
+	apply plugin: 'java'
+	apply plugin: 'org.springframework.boot'
+	apply plugin: 'io.spring.dependency-management'
+	apply plugin: 'info.solidsoft.pitest'
 
-group = 'com.corp.connexus'
-version = '0.0.1-SNAPSHOT'
-
-java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(23)
+	java {
+		toolchain {
+			languageVersion = JavaLanguageVersion.of(23)
+		}
+		withSourcesJar()
+		withJavadocJar()
 	}
-}
 
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
+	repositories {
+		mavenCentral()
+		mavenLocal()
 	}
-}
 
-repositories {
-	mavenCentral()
-}
+	tasks.named('test') {
+		useJUnitPlatform()
+		maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
+		jvmArgs = ['-Xmx2048m']
+	}
 
-dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'com.mysql:mysql-connector-j'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	// PIT Test Plugin
-	pitest 'org.pitest:pitest-junit5-plugin:1.0.0'
-}
+	tasks.withType(JavaCompile) {
+		options.encoding = 'UTF-8'
+		options.incremental = true
+	}
 
-tasks.named('test') {
-	useJUnitPlatform()
-}
+	group = 'com.corp.connexus'
+	version = '0.0.1-SNAPSHOT'
 
-pitest {
-	// Definindo as classes e testes alvo
-	targetClasses = ['com.corp.connexus.hr.*']  // Classes alvo para análise de mutação
-	targetTests = ['com.corp.connexus.hr.*Test']  // Testes correspondentes às classes alvo
+	configurations {
+		compileOnly {
+			extendsFrom annotationProcessor
+		}
+	}
 
-	// Excluindo classes que não precisam de testes de mutação
-	excludedClasses = [
-			'com.corp.connexus.hr.model.*',         // Excluir modelos simples
-			'com.corp.connexus.hr.config.*',        // Excluir classes de configuração
-			'com.corp.connexus.hr.exception.*',     // Excluir classes de exceção
-			'com.corp.connexus.hr.enums.*'          // Excluir enums
-	]
+	dependencies {
+		implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+		implementation 'org.springframework.boot:spring-boot-starter-validation'
+		implementation 'org.springframework.boot:spring-boot-starter-web'
+		compileOnly 'org.projectlombok:lombok'
+		runtimeOnly 'com.mysql:mysql-connector-j'
+		annotationProcessor 'org.projectlombok:lombok'
+		testImplementation 'org.springframework.boot:spring-boot-starter-test'
+		testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+		pitest 'org.pitest:pitest-junit5-plugin:1.0.0'
+	}
 
-	// Excluindo métodos que não precisam de testes de mutação
-	excludedMethods = ['toString', 'hashCode', 'equals', 'get*', 'set*']
+	pitest {
+		targetClasses = ['com.corp.connexus.hr.*']
+		targetTests = ['com.corp.connexus.hr.*Test']
 
-	// Configurando fontes principais e de teste
-	testSourceSets = [sourceSets.test]
-	mainSourceSets = [sourceSets.main]
+		excludedClasses = [
+				'com.corp.connexus.hr.model.*',
+				'com.corp.connexus.hr.config.*',
+				'com.corp.connexus.hr.exception.*',
+				'com.corp.connexus.hr.enums.*'
+		]
 
-	// Configurando o JUnit 5
-	junit5PluginVersion = '1.0.0'
+		excludedMethods = ['toString', 'hashCode', 'equals', 'get*', 'set*']
 
-	// Ajuste de desempenho para a JVM
-	jvmArgs = ['-Xmx1024m']  // Aumente conforme necessário para grandes projetos
+		testSourceSets = [sourceSets.test]
+		mainSourceSets = [sourceSets.main]
 
-	// Formatos de saída
-	outputFormats = ['XML', 'HTML']
-	timestampedReports = false
+		junit5PluginVersion = '1.0.0'
 
-	// Configuração do uso de arquivo de classpath em Windows
-	useClasspathFile = true
+		jvmArgs = ['-Xmx1024m']
 
-	// Filtro para extensões de arquivos desnecessários no classpath do PIT
-	fileExtensionsToFilter.addAll('xml', 'orbit')
+		outputFormats = ['XML', 'HTML']
+		timestampedReports = false
 
-	// Definindo o número de threads para o PIT
-	threads = 4
+		useClasspathFile = true
 
-	// Versão do PIT
-	pitestVersion = '1.15.0'
+		fileExtensionsToFilter.addAll('xml', 'orbit')
+
+		threads = 8
+
+		pitestVersion = '1.15.0'
+
+		withHistory = true
+		historyInputLocation = file("$buildDir/pitestHistory")
+		historyOutputLocation = file("$buildDir/pitestHistory")
+	}
 }
