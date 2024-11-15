@@ -13,11 +13,5 @@ buildCache {
     local {
         enabled = true
     }
-    remote(HttpBuildCache) {
-        url = 'http://your-cache-server/cache/'  // Substitua pela URL do servidor de cache, se necessário
-        push = true
-    }
 }
-
-// Nome do projeto (opcional)
 rootProject.name = 'connexus-hr'
