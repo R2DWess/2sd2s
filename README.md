@@ -79,7 +79,7 @@ Meus agradecimentos e saudações a todos aqueles que, de alguma forma, sentiram
   <tr>
     <td align="center">
       <a href="https://www.linkedin.com/in/wesley-lima-244405251/" title="Wesley Lima">
-        <img src="https://media.licdn.com/dms/image/v2/D4D03AQEVAsL2UL6A0w/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1721323972268?e=1729728000&v=beta&t=TguSE9Dw8QDOAujT6SU4c_1E3iIMqlFaN9oLsLr5Fys" width="100px;" alt="Foto do Wesley Lima"/><br>
+        <img src="https://media.licdn.com/dms/image/v2/D4D03AQEVAsL2UL6A0w/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1721323972268?e=1736985600&v=beta&t=bc--BknoVxbb5UlexqIoW4wjwj4xDrKbxZCSTinaMe8" width="100px;" alt="Foto do Wesley Lima"/><br>
         <sub>
           <b>Wesley Lima</b>
         </sub>
